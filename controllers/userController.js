@@ -18,8 +18,11 @@ module.exports.addUserEtudiantWithImg = async(req,res) => {
     try {
         const {nom , prenom , email , password } = req.body;
         const roleEtudiant = 'Etudiant'
+        const {filename}  = req.file
+
+
         const user = await userModel.create({
-        nom,prenom,email ,password ,role : roleEtudiant
+        nom,prenom,email ,password ,role : roleEtudiant , image : filename
         })
 
         res.status(200).json({user});
