@@ -90,3 +90,17 @@ module.exports.deleteUsersById = async(req,res) => {
         res.status(500).json({message: error.message});
     }
 }
+module.exports.updateuserById = async (req, res) => {
+    try {
+    const {id} = req.params
+    const {email , nom , prenom} = req.body;
+    
+
+    await userModel.findByIdAndUpdate(id,{$set : {email , nom , prenom}})
+    const updated = await userModel.findById(id)
+    res.status(200).json({updated})
+}
+ catch (error) {
+    res.statur(500).json({message: error.message});
+}
+}

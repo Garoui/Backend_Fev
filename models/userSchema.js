@@ -33,7 +33,7 @@ role:{
 image: {type : String, require : false,default : "Etudiant.png"},
 //age: {type : Number},
 //etat: Boolean
-count : Number,
+count : {type : Number, default:'0'},
 },
 {timestamps: true}
 );
