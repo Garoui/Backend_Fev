@@ -10,7 +10,7 @@ const http = require('http');//1
 var indexRouter = require('./routes/indexRouter');
 var usersRouter = require('./routes/usersRouter');
 var osRouter = require('./routes/osRouter');
-
+var formationRouter = require('./routes/formationRouter');
 var app = express();
 
 app.use(logger('dev'));
@@ -18,10 +18,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
+//routes
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/os', osRouter);
+app.use('/formation', formationRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
