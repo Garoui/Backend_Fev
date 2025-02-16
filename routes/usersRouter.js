@@ -7,8 +7,9 @@ router.post('/addUserEtudiant',userController.addUserEtudiant);
 router.post('/addUserAdmin',userController.addUserAdmin);
 router.get('/getAllUsers',userController.getAllUsers);
 router.get('/getUsersById/:id',userController.getUsersById);
-router.put('/updateuserById/:id',userController.updateuserById);
+router.get('/searchUserByUsername',userController.searchUserByUsername)
 
+router.put('/updateuserById/:id',userController.updateuserById);
 router.post('/addUserEtudiantWithImg',upload.single("image"),userController.addUserEtudiantWithImg);
 
 module.exports = router;

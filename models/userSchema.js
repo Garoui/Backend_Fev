@@ -28,10 +28,10 @@ password: {
 },
 role:{
     type:String,
-    enum : ["Admin", "Etudiant"],
+    enum : ["Admin", "Etudiant", "Formateur"],
 },
 image: {type : String, require : false,default : "Etudiant.png"},
-//age: {type : Number},
+
 //etat: Boolean
 count : {type : Number, default:'0'},
 },

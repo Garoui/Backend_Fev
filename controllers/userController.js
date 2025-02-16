@@ -90,6 +90,7 @@ module.exports.deleteUsersById = async(req,res) => {
         res.status(500).json({message: error.message});
     }
 }
+
 module.exports.updateuserById = async (req, res) => {
     try {
     const {id} = req.params
@@ -101,6 +102,28 @@ module.exports.updateuserById = async (req, res) => {
     res.status(200).json({updated})
 }
  catch (error) {
-    res.statur(500).json({message: error.message});
+    res.status(500).json({message: error.message});
+}
+}
+//fonction recherche
+module.exports.searchUserByUsername = async (req, res) => {
+    try {
+  
+    const {username:nom} = req.query
+    if(!nom) {
+      throw new Error("veuillez fournir un nom pour le recherche");
+    }
+
+   const userListe = await userModel.find({
+    nom: {$regex:  nom ,$options: "i" }
+   })
+   if (!userListe) {
+    throw new Error("User not fount");
+   }
+   const count = userListe.length
+    res.status(200).json({userListe,count})
+}
+ catch (error) {
+    res.status(500).json({message: error.message});
 }
 }
