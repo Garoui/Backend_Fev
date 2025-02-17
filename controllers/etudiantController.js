@@ -7,11 +7,11 @@ module.exports.addUserEtudiant = async(req,res) => {
     try {
         const {nom , prenom , niveau , email , password } = req.body;
         const roleEtudiant = 'Etudiant'
-        const user = await userModel.create({
+        const etudiant = await etudiantModel.create({
         nom,prenom,email ,password ,niveau ,role : roleEtudiant
         })
 
-        res.status(200).json({user});
+        res.status(200).json({etudiant});
 
     } catch (error) {
         res.status(500).json({message: error.message});
@@ -19,7 +19,7 @@ module.exports.addUserEtudiant = async(req,res) => {
 }
 
 //get all étudiants
-module.exports.getAllEtudiants = async (req, res) => {
+module.exports.getAllEtudiant = async (req, res) => {
   try {
     //personalisation d'erreur
     const etudiantList = await etudiantModel.find();

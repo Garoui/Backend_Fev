@@ -6,7 +6,7 @@ const etudiantController = require('../controllers/etudiantController');
 
 router.post('/addUserEtudiant',etudiantController.addUserEtudiant);
 
-router.get('/getAllEtudiants',etudiantController.getAllEtudiants);
+router.get('/getAllEtudiant',etudiantController.getAllEtudiant);
 
 router.get('/getEtudiantById/:id',etudiantController.getEtudiantById);
 

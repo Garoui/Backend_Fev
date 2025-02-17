@@ -1,10 +1,26 @@
 const mongoose = require('mongoose');
-const user = require('./userSchema');
 
-const administrateurSchema = new mongoose.Schema({
-    privileges: { type: [String], default: ['gestion_cours', 'gestion_utilisateurs', 'maintenance'] }
-});
+const adminSchema = new mongoose.Schema({
+  nom: {
+    type: String,
+    required: true,
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    match: [/^\S+@\S+\.\S+$/, "Please enter a valid email address"],
+  },
+  password: {
+    type: String,
+    required: true,
+    minLength: 8,
+  },
+  role: {
+    type: String,
+    default: 'Admin',
+  },
+}, { timestamps: true });
 
-//module.exports = user.discriminator('Administrateur', administrateurSchema);
-const user = mongoose.model('Administrateur', administrateurSchema);
-module.exports = user;
+const Admin = mongoose.model('Admin', adminSchema);
+module.exports = Admin;
