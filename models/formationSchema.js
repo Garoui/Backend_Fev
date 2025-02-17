@@ -6,12 +6,12 @@ const formationSchema = new mongoose.Schema({
      formateur: { type: String , required: true },
      date: {type: String},
      niveau: {type: String},
-    
+     users:[{type:mongoose.Schema.Types.ObjectId,ref:'User'}],//many to many
 
 
 },
 {timestamps: true}
 );
 
-const formation = mongoose.model("formation", formationSchema);
-module.exports = formation;
+const Formation = mongoose.model("Formation", formationSchema);
+module.exports = Formation;
