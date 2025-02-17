@@ -11,6 +11,11 @@ var indexRouter = require('./routes/indexRouter');
 var usersRouter = require('./routes/usersRouter');
 var osRouter = require('./routes/osRouter');
 var formationRouter = require('./routes/formationRouter');
+var etudiantRouter = require('./routes/etudiantRouter');
+var formateurRouter = require('./routes/formateurRouter');
+var adminRouter = require('./routes/adminRouter');
+
+
 var app = express();
 
 app.use(logger('dev'));
@@ -23,6 +28,9 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/os', osRouter);
 app.use('/formation', formationRouter);
+app.use('/etudiant', etudiantRouter);
+app.use('/formateur', formateurRouter);
+app.use('/admin', adminRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
