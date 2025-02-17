@@ -1,11 +1,35 @@
 const mongoose = require('mongoose');
-const user = require('./userSchema');
+
 
 const formateurSchema = new mongoose.Schema({
-    specialite: { type: String, required: true }
-});
+    
+    nom: {
+        type: String,
+        required: true,
+      },
+      email: {
+        type: String,
+        required: true,
+        unique: true,
+        match: [/^\S+@\S+\.\S+$/, "Please enter a valid email address"],
+      },
+      password: {
+        type: String,
+        required: true,
+        minLength: 8,
+      },
+      specialite: {
+        type: String,
+        required: true,
+      },
+      role: {
+        type: String,
+        default: 'Formateur',
+      },
+    }, 
+    
+    { timestamps: true });
+    
 
-// Héritage de la classe Utilisateur
-//module.exports = user.discriminator('Formateur', formateurSchema);
-const user = mongoose.model("user", userSchema);
-module.exports = user;
+const formateur = mongoose.model("formateur", formateurSchema);
+module.exports = formateur;
