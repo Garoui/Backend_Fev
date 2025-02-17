@@ -34,6 +34,9 @@ image: {type : String, require : false,default : "Etudiant.png"},
 
 //etat: Boolean
 count : {type : Number, default:'0'},
+formations : [{type : mongoose.Schema.Types.ObjectId,ref:'Formation'}],//ONE TO MANY
+//formation : {type : mongoose.Schema.Types.ObjectId,ref:'Formation'}//ONE TO one
+
 },
 {timestamps: true}
 );
@@ -54,5 +57,5 @@ userSchema.post("save", async function(req,res,next) {
     console.log("new user was created & saved successfully");
     next();
 })
-const user = mongoose.model("user", userSchema);
-module.exports = user;
+const User = mongoose.model("User", userSchema);
+module.exports = User;

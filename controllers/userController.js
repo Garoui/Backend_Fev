@@ -1,4 +1,5 @@
 const userModel = require('../models/userSchema');
+const formationModel = require('../models/formationSchema');
 
 module.exports.addUserEtudiant = async(req,res) => {
     try {
@@ -48,7 +49,7 @@ module.exports.addUserAdmin = async(req,res) => {
 
 module.exports.getAllUsers = async(req,res) => {
     try {
-        const userListe = await userModel.find()
+        const userListe = await userModel.find()//.populate("formation") hedhi bech tkharjlk les donner de formation kol ta3 apprenant ou formateur
         
 
         res.status(200).json({userListe});
@@ -82,6 +83,9 @@ module.exports.deleteUsersById = async(req,res) => {
           if (!user) {
             throw new Error("User not found");
           }
+          await formationModel.updateMany({}, {
+            $pull: { users:"userId"},
+          });
 
         await userModel.findByIdAndDelete(id)
         
