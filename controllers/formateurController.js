@@ -1,5 +1,4 @@
-
-const formateurModel = require('../models/formateurSchema');
+//const formateurModel = require('../models/formateurSchema');
 const userModel = require('../models/userSchema');
 
 //add formateur
@@ -7,23 +6,23 @@ module.exports.addUserFormateur = async(req,res) => {
     try {
         const {nom , prenom , email , password , specialite } = req.body;
         const roleFormateur = 'Formateur'
-        const formateur = await formateurModel.create({
+        const formateur = await userModel.create({
         nom,prenom,email ,password ,specialite ,role : roleFormateur
         })
 
         res.status(200).json({formateur});
 
     } catch (error) {
-        res.status(500).json({message: error.message});
+        res.status(500).json
+         ({message: error.message});
     }
 }
-
 
 // get all  formateurs
 module.exports.getAllFormateurs = async (req, res) => {
   try {
     //personalisation d'erreur
-    const formateurList = await formateurModel.find();
+    const formateurList = await userModel.find();
     if (!formateurList || formateurList.length === 0) {
         throw new Error("Aucun formateur trouvé");
     }
@@ -38,7 +37,7 @@ module.exports.getAllFormateurs = async (req, res) => {
   // get formateur with ID
 module.exports.getFormateursById = async (req, res) => {
     try {
-      const formateur = await formateurModel.findById(req.params.id);
+      const formateur = await userModel.findById(req.params.id);
       if (!formateur) {
         return res.status(404).json({ message: 'Formateur non trouvé' });
       }
@@ -52,7 +51,7 @@ module.exports.getFormateursById = async (req, res) => {
   // update formateur
 module.exports.updateFormateurById = async (req, res) => {
     try {
-      const formateur = await formateurModel.findByIdAndUpdate(req.params.id, req.body, {
+      const formateur = await userModel.findByIdAndUpdate(req.params.id, req.body, {
         new: true,
       });
       if (!formateur) {
@@ -68,7 +67,7 @@ module.exports.updateFormateurById = async (req, res) => {
   // delete formateur
 module.exports.deleteFormateurById = async (req, res) => {
     try {
-      const formateur = await formateurModel.findByIdAndDelete(req.params.id);
+      const formateur = await userModel.findByIdAndDelete(req.params.id);
       if (!formateur) {
         return res.status(404).json({ message: 'Formateur non trouvé' });
       }

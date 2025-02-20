@@ -1,4 +1,4 @@
-const etudiantModel = require('../models/etudiantSchema');
+//const etudiantModel = require('../models/etudiantSchema');
 const userModel =require('../models/userSchema')
 
 
@@ -7,7 +7,7 @@ module.exports.addUserEtudiant = async(req,res) => {
     try {
         const {nom , prenom , niveau , email , password } = req.body;
         const roleEtudiant = 'Etudiant'
-        const etudiant = await etudiantModel.create({
+        const etudiant = await userModel.create({
         nom,prenom,email ,password ,niveau ,role : roleEtudiant
         })
 
@@ -22,7 +22,7 @@ module.exports.addUserEtudiant = async(req,res) => {
 module.exports.getAllEtudiant = async (req, res) => {
   try {
     //personalisation d'erreur
-    const etudiantList = await etudiantModel.find();
+    const etudiantList = await userModel.find();
     if (!etudiantList || etudiantList.length === 0) {
         throw new Error("Aucun etudiant trouvé");
     }
@@ -36,7 +36,7 @@ module.exports.getAllEtudiant = async (req, res) => {
 // get étudiant with ID
 module.exports.getEtudiantById = async (req, res) => {
   try {
-    const etudiant = await etudiantModel.findById(req.params.id);
+    const etudiant = await userModel.findById(req.params.id);
     if (!etudiant) {
       return res.status(404).json({ message: 'Étudiant non trouvé' });
     }
@@ -49,7 +49,7 @@ module.exports.getEtudiantById = async (req, res) => {
 // update étudiant
 module.exports.updateEtudiantById = async (req, res) => {
   try {
-    const etudiant = await etudiantModel.findByIdAndUpdate(req.params.id, req.body, {
+    const etudiant = await userModel.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
     });
     if (!etudiant) {
@@ -64,7 +64,7 @@ module.exports.updateEtudiantById = async (req, res) => {
 // delete étudiant
 module.exports.deleteEtudiantById = async (req, res) => {
   try {
-    const etudiant = await etudiantModel.findByIdAndDelete(req.params.id);
+    const etudiant = await userModel.findByIdAndDelete(req.params.id);
     if (!etudiant) {
       return res.status(404).json({ message: 'Étudiant non trouvé' });
     }
