@@ -13,5 +13,5 @@ const formationSchema = new mongoose.Schema({
 {timestamps: true}
 );
 
-const Formation = mongoose.model("Formation", formationSchema);
+const Formation = mongoose.model("Formations", formationSchema);
 module.exports = Formation;
