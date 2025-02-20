@@ -11,9 +11,9 @@ var storage= multer.diskStorage(
         const uploadPath = 'public/files';
         const originalName = file.originalname;
         const fileExtension = path.extname(originalName);
-        let fileName = originalName;
+        const fileName = originalName;
 
-        const fileIndex = 1;
+        var fileIndex = 1;
         while (fs.existsSync(path.join(uploadPath, fileName))){
             const baseName = path.basename(originalName, fileExtension);
             fileName =`${baseName}_${fileIndex}${fileExtension}`;
@@ -23,5 +23,5 @@ var storage= multer.diskStorage(
     }
    
     })
-const uploafile = multer({storage : storage})
-module.exports = uploafile
+const uploadfile = multer({storage : storage});
+module.exports = uploadfile;
