@@ -1,4 +1,4 @@
-const adminModel = require('../models/adminSchema');
+
 
 const userModel = require('../models/userSchema');
 
@@ -7,7 +7,7 @@ module.exports.addUserAdmin = async(req,res) => {
     try {
         const {nom , prenom , email , password } = req.body;
         const roleAdmin = 'Admin'
-        const admin = await adminModel.create({
+        const admin = await userModel.create({
         nom,prenom,email ,password ,role  : roleAdmin
         })
 
@@ -22,7 +22,7 @@ module.exports.addUserAdmin = async(req,res) => {
 module.exports.getAllAdmins = async (req, res) => {
     try {
         //personalisation d'erreur
-        const adminList = await adminModel.find();
+        const adminList = await userModel.find();
         if (!adminList || adminList.length === 0) {
             throw new Error("Aucun admin trouvé");
         }
@@ -36,7 +36,7 @@ module.exports.getAllAdmins = async (req, res) => {
 // get admin with ID
 module.exports.getAdminById = async (req, res) => {
   try {
-    const admin = await adminModel.findById(req.params.id);
+    const admin = await userModel.findById(req.params.id);
     if (!admin) {
       return res.status(404).json({ message: 'Admin non trouvé' });
     }
@@ -49,7 +49,7 @@ module.exports.getAdminById = async (req, res) => {
 // update admin
 module.exports.updateAdminById = async (req, res) => {
   try {
-    const admin = await adminModel.findByIdAndUpdate(req.params.id, req.body, {
+    const admin = await userModel.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
     });
     if (!admin) {
@@ -64,7 +64,7 @@ module.exports.updateAdminById = async (req, res) => {
 // delete admin
 module.exports.deleteAdminById = async (req, res) => {
   try {
-    const admin = await adminModel.findByIdAndDelete(req.params.id);
+    const admin = await userModel.findByIdAndDelete(req.params.id);
     if (!admin) {
       return res.status(404).json({ message: 'Admin non trouvé' });
     }
