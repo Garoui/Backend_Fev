@@ -6,11 +6,17 @@ var logger = require('morgan');
 const {connectToMongoDb} = require("./config/db");
 require("dotenv").config();
 const http = require('http');//1
+const fetch = require('node-fetch');
+global.fetch = fetch;
+global.Headers = fetch.Headers;
+global.Request = fetch.Request;
+global.Response = fetch.Response;
 
 var indexRouter = require('./routes/indexRouter');
 var usersRouter = require('./routes/usersRouter');
 var osRouter = require('./routes/osRouter');
 var formationRouter = require('./routes/formationRouter');
+var GeminiRouter = require('./routes/GeminiRouter');
 
 
 
@@ -27,6 +33,7 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/os', osRouter);
 app.use('/formation', formationRouter);
+app.use('/Gemini', GeminiRouter);
 
 
 
