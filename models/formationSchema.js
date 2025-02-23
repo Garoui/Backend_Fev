@@ -7,6 +7,8 @@ const formationSchema = new mongoose.Schema({
      date: {type: String},
      niveau: {type: String},
      users:[{type:mongoose.Schema.Types.ObjectId,ref:'User'}],//many to many
+groupchats : [{type : mongoose.Schema.Types.ObjectId,ref:'GroupChat'}],//ONE TO MANY
+chapitres : [{type : mongoose.Schema.Types.ObjectId,ref:'Chapitre'}],//ONE TO MANY
 
 
 },
