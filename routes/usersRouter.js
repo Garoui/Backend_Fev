@@ -5,7 +5,9 @@ const upload = require ('../middlewares/uploadFile');
 const etudiantController = require('../controllers/etudiantController');
 const formateurController = require('../controllers/formateurController');
 const adminController = require('../controllers/adminController');
+const {requireAuthUser} = require('../middlewares/authMiddleware');
 
+router.post('/login',userController.login);
 
 //admin
 router.post('/addUserAdmin',adminController.addUserAdmin);
@@ -18,7 +20,7 @@ router.delete('/deleteAdminById/:id',adminController.deleteAdminById);
 // /* GET users listing. */
  router.post('/addUserEtudiant',userController.addUserEtudiant);
 //router.post('/addUserAdmin',userController.addUserAdmin);
- router.get('/getAllUsers',userController.getAllUsers);
+ router.get('/getAllUsers',requireAuthUser,userController.getAllUsers);
  router.get('/getUsersById/:id',userController.getUsersById);
  router.get('/searchUserByUsername',userController.searchUserByUsername)
  router.put('/updateuserById/:id',userController.updateuserById);

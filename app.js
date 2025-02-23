@@ -6,6 +6,7 @@ var logger = require('morgan');
 const {connectToMongoDb} = require("./config/db");
 require("dotenv").config();
 const http = require('http');//1
+const session = require('express-session')
 const fetch = require('node-fetch');
 global.fetch = fetch;
 global.Headers = fetch.Headers;
@@ -28,13 +29,25 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(session({
+  secret: "net secret pfe",
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+    secure: {secure: false},
+    //maxAge: 24*60*60,
+    maxAge: 1*60*60,
+  },
+}))
+
+
 //routes
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/os', osRouter);
 app.use('/formation', formationRouter);
 app.use('/Gemini', GeminiRouter);
-
 
 
 // catch 404 and forward to error handler

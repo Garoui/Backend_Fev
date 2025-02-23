@@ -35,8 +35,10 @@ image: {type : String, require : false,default : "role.png"},
 //etat: Boolean
 count : {type : Number, default:'0'},
 formations : [{type : mongoose.Schema.Types.ObjectId,ref:'Formation'}],//ONE TO MANY
-//formation : {type : mongoose.Schema.Types.ObjectId,ref:'Formation'}//ONE TO one
 
+//formation : {type : mongoose.Schema.Types.ObjectId,ref:'Formation'}//ONE TO one
+etat: Boolean,
+ban:Boolean,
 },
 {timestamps: true}
 );
@@ -45,7 +47,8 @@ userSchema.pre("save", async function(next){
         const salt = await bcrypt.genSalt();
         const user = this;// this hya data w data par defaut user
         user.password = await bcrypt.hash(user.password,salt)
-        //user.etat = false ;
+        user.etat = false ;
+        user.ban = true ;
         user.count = user.count + 1
         next();
 
@@ -56,112 +59,35 @@ userSchema.pre("save", async function(next){
 userSchema.post("save", async function(req,res,next) {
     console.log("new user was created & saved successfully");
     next();
-})
+});
+//authentifier
+userSchema.statics.login= async function (email,password) {
+    //console.log(email, password);
+        const user = await this.findOne({email});
+      //console.log(user)
+        if(user){
+            const auth = await bcrypt.compare(password, user.password);
+        //console.log(auth)
+            if(auth){
+                //if(user.etat == true) {
+                    //ban hya tblokilk idha fama condition
+                   // if(user.ban == false){
+                        
+                            return user ;
+                       // } else{
+                        //throw new Error("ban");
+                    //}   
+                    //}else{
+                     //   throw new Error("compte desactive");
+                    //}
+            }else{
+                throw new Error("Password invalid");
+            }
+        }else{
+            throw new Error ("Email not found");
+        }
+    
+};
 const User = mongoose.model("User", userSchema);
 module.exports = User;
 
-
-
-// const mongoose = require('mongoose');
-
-// const adminSchema = new mongoose.Schema({
-//   nom: {
-//     type: String,
-//     required: true,
-//   },
-//   email: {
-//     type: String,
-//     required: true,
-//     unique: true,
-//     match: [/^\S+@\S+\.\S+$/, "Please enter a valid email address"],
-//   },
-//   password: {
-//     type: String,
-//     required: true,
-//     minLength: 8,
-//   },
-//   role: {
-//     type: String,
-//     default: 'Admin',
-//   },
-// }, { timestamps: true });
-
-// const Admin = mongoose.model('Admin', adminSchema);
-// module.exports = Admin;
-
-
-
-// const mongoose = require('mongoose');
-
-// const etudiantSchema = new mongoose.Schema({
-//   nom: {
-//     type: String,
-//     required: true,
-//   },
-//   email: {
-//     type: String,
-//     required: true,
-//     unique: true,
-//     match: [/^\S+@\S+\.\S+$/, "Please enter a valid email address"],
-//   },
-//   password: {
-//     type: String,
-//     required: true,
-//     minLength: 8,
-//     match:[
-//       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-//           "Le mot de passe doit contenir au moins 8 caractères, une lettre majuscule, une lettre minuscule, un chiffre et un caractère spécial.",
-//   ],
-//   },
-//   niveau: {
-//     type: String,
-//     required: true,
-//   },
-//   role: {
-//     type: String,
-//     default: 'Etudiant',
-//   },
-// }, { timestamps: true });
-
-// const Etudiant = mongoose.model('Etudiant', etudiantSchema);
-// module.exports = Etudiant;
-
-
-
-
-
-// const mongoose = require('mongoose');
-
-
-// const formateurSchema = new mongoose.Schema({
-    
-//     nom: {
-//         type: String,
-//         required: true,
-//       },
-//       email: {
-//         type: String,
-//         required: true,
-//         unique: true,
-//         match: [/^\S+@\S+\.\S+$/, "Please enter a valid email address"],
-//       },
-//       password: {
-//         type: String,
-//         required: true,
-//         minLength: 8,
-//       },
-//       specialite: {
-//         type: String,
-//         required: true,
-//       },
-//       role: {
-//         type: String,
-//         default: 'Formateur',
-//       },
-//     }, 
-    
-//     { timestamps: true });
-    
-
-// const formateur = mongoose.model("formateur", formateurSchema);
-// module.exports = formateur;
