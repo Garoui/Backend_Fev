@@ -2,8 +2,8 @@ const userModel = require('../models/userSchema');
 const formationModel = require('../models/formationSchema');
 const jwt = require('jsonwebtoken');
 
-//const maxTime = 24*60 *60 //24h
-const maxTime = 1*60 *60 //1min
+const maxTime = 24*60 *60 //24h
+//const maxTime = 5*60 *60 //1min
 
 const createToken = (id) => {
     return jwt.sign({id}, 'net secret pfe', {expiresIn: maxTime})
@@ -145,7 +145,7 @@ module.exports.login= async (req,res) => {
         const {email , password } = req.body;
         const user = await userModel.login(email,password)
         const token = createToken(user._id)
-        console.log(token)
+        //console.log(token)
         res.cookie("jwt_token_abir",token, {httpOnly:false,maxAge:maxTime * 1000})
         res.status(200).json({user})
     } catch (error) {
@@ -157,7 +157,7 @@ module.exports.login= async (req,res) => {
 module.exports.logout= async (req,res) => {
     try {
         
-        const token = createToken(user._id)
+        
         res.cookie("jwt_token_abir","", {httpOnly:false,maxAge:1})
         res.status(200).json("logged")
     } catch (error) {

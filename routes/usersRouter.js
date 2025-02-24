@@ -8,6 +8,7 @@ const adminController = require('../controllers/adminController');
 const {requireAuthUser} = require('../middlewares/authMiddleware');
 
 router.post('/login',userController.login);
+router.post('/logout',userController.logout);
 
 //admin
 router.post('/addUserAdmin',adminController.addUserAdmin);
