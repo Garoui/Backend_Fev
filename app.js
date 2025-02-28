@@ -22,7 +22,12 @@ var usersRouter = require('./routes/usersRouter');
 var osRouter = require('./routes/osRouter');
 var formationRouter = require('./routes/formationRouter');
 var GeminiRouter = require('./routes/GeminiRouter');
-
+var groupchatRouter = require('./routes/groupchatRouter');
+var chapitreRouter = require('./routes/chapitreRouter');
+var enregistrementRouter = require('./routes/enregistrementRouter');
+var messageRouter = require('./routes/messageRouter');
+var planificationRouter = require('./routes/planificationRouter');
+var sessionRouter = require('./routes/sessionRouter');
 
 
 
@@ -59,6 +64,13 @@ app.use('/users', usersRouter);
 app.use('/os', osRouter);
 app.use('/formation', formationRouter);
 app.use('/Gemini', GeminiRouter);
+app.use('/groupchat',groupchatRouter );
+app.use('/chapitre',chapitreRouter );
+app.use('/enregistrement',enregistrementRouter );
+app.use('/message',messageRouter );
+app.use('/planification',planificationRouter );
+app.use('/session',sessionRouter );
+
 
 
 // catch 404 and forward to error handler

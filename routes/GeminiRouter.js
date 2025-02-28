@@ -11,7 +11,7 @@ router.post("/generate", async (req, res) => {
   try {
     const { prompt } = req.body;
 
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+    const model = genAI.getGenerativeModel({ model: "gemini-pro" });//gemini-1.5-pro
 
     const result = await model.generateContent(prompt);
     const response = result.response.text(); // Récupérer le texte généré
