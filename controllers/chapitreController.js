@@ -1,48 +1,69 @@
-const formationModel = require('../models/formationSchema');
-const userModel = require('../models/userSchema');
+const chapitreModel = require('../models/chapitreSchema');
+//const userModel = require('../models/userSchema');
 
-module.exports.getAllFormation = async (req, res) => {
+//ajouter chapitre
+module.exports.addChapitre = async (req, res) => {
     try {
-        //personalisation d'erreur
-        const formationList = await formationModel.find();
-        if (!formationList || formationList.length === 0) {
-            throw new Error("Aucun formation trouvé");
-        }
 
-        res.status(200).json(formationList)
+        const { chapTitre, date } = req.body;
+
+
+
+        //personalisation d'erreur
+
+        const chapitre = await chapitreModel.create({
+            chapTitre, date
+        })
+
+
+        res.status(200).json({ chapitre });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 }
-
-module.exports.getFormationById = async (req, res) => {
+//afficher toutes les chapitre
+module.exports.getAllChapitres = async (req, res) => {
     try {
-
-        const id = req.params.id
-        const formation = await formationModel.findById(id);
         //personalisation d'erreur
-        if (!formation || formation.length === 0) {
-            throw new Error("Formation introuvable");
+        const chapitreList = await chapitreModel.find();
+        if (!chapitreList || chapitreList.length === 0) {
+            throw new Error("Aucun chapitre trouvé");
         }
 
-        res.status(200).json(formation);
+        res.status(200).json(chapitreList)
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 }
+//afficher chapitre avec id
+module.exports.getChapitreById = async (req, res) => {
+    try {
 
-module.exports.deleteFormationById = async (req, res) => {
+        const id = req.params.id
+        const chapitre = await chapitreModel.findById(id);
+        //personalisation d'erreur
+        if (!chapitre || chapitre.length === 0) {
+            throw new Error("Chapitre introuvable");
+        }
+
+        res.status(200).json(chapitre);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+//supprimer chapitre avec id
+module.exports.deleteChapitreById = async (req, res) => {
     try {
 
         const id = req.params.id
 
-        const formationById = await formationModel.findByIdAndDelete(id);
+        const chapitreById = await chapitreModel.findByIdAndDelete(id);
 
         //personalisation d'erreur
-        if (!formationById || formationById.length === 0) {
-            throw new Error("Formation introuvable");
+        if (!chapitreById || chapitreById.length === 0) {
+            throw new Error("Chapitre introuvable");
         }
-        await formationModel.findByIdAndDelete(id);
+        await chapitreModel.findByIdAndDelete(id);
 
         res.status(200).json("deleted");
     } catch (error) {
@@ -50,97 +71,26 @@ module.exports.deleteFormationById = async (req, res) => {
     }
 }
 
-module.exports.addFormation = async (req, res) => {
-    try {
 
-        const { titre, description, formateur, date, niveau } = req.body;
-
-
-
-        //personalisation d'erreur
-
-        const formation = await formationModel.create({
-            titre, description, formateur, date, niveau
-        })
-
-
-        res.status(200).json({ formation });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-}
-
-module.exports.updateFormation = async (req, res) => {
+//mise a jour chapitre
+module.exports.updateChapitre = async (req, res) => {
     try {
         const id = req.params.id;
-        const { titre, description, formateur, date, niveau } = req.body;
+        const { chapTitre, date } = req.body;
 
 
-        const formationById = await formationModel.findById(id);
+        const chapitreById = await chapitreModel.findById(id);
         //personalisation d'erreur
-        if (!formationById) {
-            throw new Error("Formation introuvable");
+        if (!chapitreById) {
+            throw new Error("Chapitre introuvable");
         }
 
-
-
-        const updated = await formationModel.findByIdAndUpdate(id, {
-            $set: { titre, description, formateur, date, niveau },
+        const updated = await chapitreModel.findByIdAndUpdate(id, {
+            $set: { chapTitre,date },
         })
 
 
         res.status(200).json({ updated });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-}
-module.exports.affect = async (req, res) => {
-    try {
-        const { userId, formationId } = req.body;
-        const formationById = await formationModel.findById(formationId);
-        //personalisation d'erreur
-        if (!formationById) {
-            throw new Error("Formation introuvable");
-        }
-
-        const user = await userModel.findById(userId);
-        if (!user) {
-            throw new Error("User not found");
-        }
-        await formationModel.findByIdAndUpdate(formationId, {
-            $push: { users: userId },
-        });
-        await userModel.findByIdAndUpdate(userId, {
-            $push: { formations: formationId },
-        })
-
-        res.status(200).json( 'affected' );
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-}
-
-module.exports.desaffect = async (req, res) => {
-    try {
-        const { userId, formationId } = req.body;
-        const formationById = await formationModel.findById(formationId);
-        //personalisation d'erreur
-        if (!formationById) {
-            throw new Error("Formation introuvable");
-        }
-
-        const user = await userModel.findById(userId);
-        if (!user) {
-            throw new Error("User not found");
-        }
-        await formationModel.findByIdAndUpdate(formationId, {
-            $pull: { users: userId }, //if it is user with relation one to many then i write unset:{user:1}
-        });
-        await userModel.findByIdAndUpdate(userId, {
-            $pull: { formations: formationId },
-        });
-
-        res.status(200).json( 'desaffected' );
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

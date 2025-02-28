@@ -22,7 +22,7 @@ module.exports.addUserFormateur = async(req,res) => {
 module.exports.getAllFormateurs = async (req, res) => {
   try {
     //personalisation d'erreur
-    const formateurList = await userModel.find();
+    const formateurList = await userModel.find({role:'Formateur'});
     if (!formateurList || formateurList.length === 0) {
         throw new Error("Aucun formateur trouvé");
     }

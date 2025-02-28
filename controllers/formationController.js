@@ -53,14 +53,14 @@ module.exports.deleteFormationById = async (req, res) => {
 module.exports.addFormation = async (req, res) => {
     try {
 
-        const { titre, description, formateur, date, niveau } = req.body;
+        const { titre, specialite, formateur, dateCreation } = req.body;
 
 
 
         //personalisation d'erreur
 
         const formation = await formationModel.create({
-            titre, description, formateur, date, niveau
+            titre,specialite, formateur,dateCreation
         })
 
 
@@ -73,7 +73,7 @@ module.exports.addFormation = async (req, res) => {
 module.exports.updateFormation = async (req, res) => {
     try {
         const id = req.params.id;
-        const { titre, description, formateur, date, niveau } = req.body;
+        const { titre, specialite, formateur, dateCreation } = req.body;
 
 
         const formationById = await formationModel.findById(id);
@@ -85,7 +85,7 @@ module.exports.updateFormation = async (req, res) => {
 
 
         const updated = await formationModel.findByIdAndUpdate(id, {
-            $set: { titre, description, formateur, date, niveau },
+            $set: { titre, specialite, formateur, dateCreation },
         })
 
 

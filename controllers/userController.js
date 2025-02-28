@@ -9,7 +9,7 @@ const createToken = (id) => {
     return jwt.sign({id}, 'net secret pfe', {expiresIn: maxTime})
 }
 //67bb176822166b7d937591aa + net secret pfe + 1m
-//eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3YmIxNzY4MjIxNjZiN2Q5Mzc1OTFhYSIsImlhdCI6MTc0MDMxNTM5MCwiZXhwIjoxNzQwNDAxNzkwfQ.lBVrcH2YxBfWlz5_PmfI1SbQC-eUOI18lLcUKuHwe30
+//eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3YmIxNzY4MjIxNjZiN2Q5Mzc1OTFhYSIsImlhdCI6MTc0MDMxNTM5MCwiZXhwIjoxNzQwNDAxNzkwfQ.lBVrcH2YxBfWlz5_PmfI1SbQC-eUOI18lLcUKuHwe3
 module.exports.addUserEtudiant = async(req,res) => {
     try {
         const {nom , prenom , email , password } = req.body;

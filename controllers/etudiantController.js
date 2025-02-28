@@ -5,10 +5,10 @@ const userModel =require('../models/userSchema')
 //add étudiant
 module.exports.addUserEtudiant = async(req,res) => {
     try {
-        const {nom , prenom , niveau , email , password } = req.body;
+        const {nom , prenom , email , password } = req.body;
         const roleEtudiant = 'Etudiant'
         const etudiant = await userModel.create({
-        nom,prenom,email ,password ,niveau ,role : roleEtudiant
+        nom,prenom,email ,password ,role : roleEtudiant
         })
 
         res.status(200).json({etudiant});
@@ -22,7 +22,7 @@ module.exports.addUserEtudiant = async(req,res) => {
 module.exports.getAllEtudiant = async (req, res) => {
   try {
     //personalisation d'erreur
-    const etudiantList = await userModel.find();
+    const etudiantList = await userModel.find({role:'Etudiant'});
     if (!etudiantList || etudiantList.length === 0) {
         throw new Error("Aucun etudiant trouvé");
     }

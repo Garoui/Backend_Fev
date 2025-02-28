@@ -1,5 +1,3 @@
-
-
 const userModel = require('../models/userSchema');
 
 // add admin
@@ -22,7 +20,7 @@ module.exports.addUserAdmin = async(req,res) => {
 module.exports.getAllAdmins = async (req, res) => {
     try {
         //personalisation d'erreur
-        const adminList = await userModel.find();
+        const adminList = await userModel.find({role:'Admin'});
         if (!adminList || adminList.length === 0) {
             throw new Error("Aucun admin trouvé");
         }

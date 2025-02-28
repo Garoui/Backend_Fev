@@ -1,146 +1,76 @@
-const formationModel = require('../models/formationSchema');
-const userModel = require('../models/userSchema');
+const messageModel = require('../models/messageSchema');
+//const userModel = require('../models/userSchema');
 
-module.exports.getAllFormation = async (req, res) => {
+//ajouter message
+module.exports.addMessage = async (req, res) => {
     try {
+        const { dateEnvoyer} = req.body;
         //personalisation d'erreur
-        const formationList = await formationModel.find();
-        if (!formationList || formationList.length === 0) {
-            throw new Error("Aucun formation trouvé");
-        }
-
-        res.status(200).json(formationList)
+        const message = await messageModel.create({
+            dateEnvoyer
+        })
+        res.status(200).json({ message });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 }
-
-module.exports.getFormationById = async (req, res) => {
+//afficher toutes les message
+module.exports.getAllMessages = async (req, res) => {
     try {
-
-        const id = req.params.id
-        const formation = await formationModel.findById(id);
         //personalisation d'erreur
-        if (!formation || formation.length === 0) {
-            throw new Error("Formation introuvable");
+        const messageList = await messageModel.find();
+        if (!messageList || messageList.length === 0) {
+            throw new Error("Aucun message trouvé");
         }
 
-        res.status(200).json(formation);
+        res.status(200).json(messageList)
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 }
-
-module.exports.deleteFormationById = async (req, res) => {
+//afficher message avec id
+module.exports.getMessageById = async (req, res) => {
     try {
-
         const id = req.params.id
-
-        const formationById = await formationModel.findByIdAndDelete(id);
-
+        const message = await messageModel.findById(id);
         //personalisation d'erreur
-        if (!formationById || formationById.length === 0) {
-            throw new Error("Formation introuvable");
+        if (!message || message.length === 0) {
+            throw new Error("Message introuvable");
         }
-        await formationModel.findByIdAndDelete(id);
-
+        res.status(200).json(message);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+//supprimer message avec id
+module.exports.deleteMessageById = async (req, res) => {
+    try {
+        const id = req.params.id
+        const messageById = await messageModel.findByIdAndDelete(id);
+        //personalisation d'erreur
+        if (!messageById || messageById.length === 0) {
+            throw new Error("Message introuvable");
+        }
+        await messageModel.findByIdAndDelete(id);
         res.status(200).json("deleted");
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 }
-
-module.exports.addFormation = async (req, res) => {
-    try {
-
-        const { titre, description, formateur, date, niveau } = req.body;
-
-
-
-        //personalisation d'erreur
-
-        const formation = await formationModel.create({
-            titre, description, formateur, date, niveau
-        })
-
-
-        res.status(200).json({ formation });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-}
-
-module.exports.updateFormation = async (req, res) => {
+//mise a jour message
+module.exports.updateMessage = async (req, res) => {
     try {
         const id = req.params.id;
-        const { titre, description, formateur, date, niveau } = req.body;
-
-
-        const formationById = await formationModel.findById(id);
+        const { dateEnvoyer } = req.body;
+        const mesaageById = await messageModel.findById(id);
         //personalisation d'erreur
-        if (!formationById) {
-            throw new Error("Formation introuvable");
+        if (!mesaageById) {
+            throw new Error("Message introuvable");
         }
-
-
-
-        const updated = await formationModel.findByIdAndUpdate(id, {
-            $set: { titre, description, formateur, date, niveau },
+        const updated = await messageModel.findByIdAndUpdate(id, {
+            $set: { dateEnvoyer },
         })
-
-
         res.status(200).json({ updated });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-}
-module.exports.affect = async (req, res) => {
-    try {
-        const { userId, formationId } = req.body;
-        const formationById = await formationModel.findById(formationId);
-        //personalisation d'erreur
-        if (!formationById) {
-            throw new Error("Formation introuvable");
-        }
-
-        const user = await userModel.findById(userId);
-        if (!user) {
-            throw new Error("User not found");
-        }
-        await formationModel.findByIdAndUpdate(formationId, {
-            $push: { users: userId },
-        });
-        await userModel.findByIdAndUpdate(userId, {
-            $push: { formations: formationId },
-        })
-
-        res.status(200).json( 'affected' );
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-}
-
-module.exports.desaffect = async (req, res) => {
-    try {
-        const { userId, formationId } = req.body;
-        const formationById = await formationModel.findById(formationId);
-        //personalisation d'erreur
-        if (!formationById) {
-            throw new Error("Formation introuvable");
-        }
-
-        const user = await userModel.findById(userId);
-        if (!user) {
-            throw new Error("User not found");
-        }
-        await formationModel.findByIdAndUpdate(formationId, {
-            $pull: { users: userId }, //if it is user with relation one to many then i write unset:{user:1}
-        });
-        await userModel.findByIdAndUpdate(userId, {
-            $pull: { formations: formationId },
-        });
-
-        res.status(200).json( 'desaffected' );
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
