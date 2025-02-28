@@ -17,12 +17,12 @@ const sessionSchema = new mongoose.Schema({
         
     },
 
-    datefin: {
+    dateFin: {
         type: String,
         required: false,
         
     },
-    createdAt: { type: Date, default: Date.now },
+    //createdAt: { type: Date, default: Date.now },
     groupchats: [{ type: mongoose.Schema.Types.ObjectId, ref: "Groupchat" }],
 });
 const Session = mongoose.model("Session", sessionSchema);
