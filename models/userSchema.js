@@ -37,8 +37,8 @@ count : {type : Number, default:'0'},
 formations : [{type : mongoose.Schema.Types.ObjectId,ref:'Formation'}],//ONE TO MANY
 
 //formation : {type : mongoose.Schema.Types.ObjectId,ref:'Formation'}//ONE TO one
-etat: Boolean,
-ban:Boolean,
+//etat: Boolean,
+//ban:Boolean,
 },
 {timestamps: true}
 );
