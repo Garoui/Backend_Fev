@@ -1,15 +1,15 @@
 const mongoose = require('mongoose');
 
 const formationSchema = new mongoose.Schema({
-    titre: { type: String, required: true, unique: true },
-    specialite: { type: String, required: true },
-    formateur: { type: String, required: true },
+    titre: { type: String, required: true},
+    description: {String},
     dateCreation: { type: Date, default: Date.now },
-    users: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],//many to many
-    groupchats: [{ type: mongoose.Schema.Types.ObjectId, ref: 'GroupChat' }],//ONE TO MANY
     chapitres: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Chapitre' }],//ONE TO MANY
-
-
+ 
+    categorie: { type: mongoose.Schema.Types.ObjectId, ref: 'Categorie' },
+    Formateur: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    ressources: [{ type: mongoose.Schema.Types.ObjectId, ref: "Ressource" }],
+  
 },
     //{ timestamps: true }
 );

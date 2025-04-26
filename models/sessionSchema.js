@@ -23,7 +23,6 @@ const sessionSchema = new mongoose.Schema({
         
     },
     //createdAt: { type: Date, default: Date.now },
-    groupchats: [{ type: mongoose.Schema.Types.ObjectId, ref: "Groupchat" }],
 });
 const Session = mongoose.model("Session", sessionSchema);
 module.exports = Session;

@@ -1,9 +1,6 @@
 const mongoose = require('mongoose');
 const enregistrementSchema = new mongoose.Schema({
-    dateEnregistrement: { 
-        type: Date, 
-        default: Date.now 
-    },
+    
     titre: { 
         type: String, 
         required: true
@@ -12,11 +9,10 @@ const enregistrementSchema = new mongoose.Schema({
         type: String, 
         required: true 
     }, 
+    liveSession: { type: mongoose.Schema.Types.ObjectId, ref: "LiveSession" }
 
 
 
-
-    groupchats: [{ type: mongoose.Schema.Types.ObjectId, ref: "GroupChat" }],
 
 }) ;
 

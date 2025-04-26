@@ -5,17 +5,11 @@ const chapitreModel = require('../models/chapitreSchema');
 module.exports.addChapitre = async (req, res) => {
     try {
 
-        const { chapTitre, date } = req.body;
-
-
-
+        const { titre, lienVideo } = req.body;
         //personalisation d'erreur
-
         const chapitre = await chapitreModel.create({
-            chapTitre, date
+            titre, lienVideo
         })
-
-
         res.status(200).json({ chapitre });
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -76,17 +70,14 @@ module.exports.deleteChapitreById = async (req, res) => {
 module.exports.updateChapitre = async (req, res) => {
     try {
         const id = req.params.id;
-        const { chapTitre, date } = req.body;
-
-
+        const {titre, lienVideo } = req.body;
         const chapitreById = await chapitreModel.findById(id);
         //personalisation d'erreur
         if (!chapitreById) {
             throw new Error("Chapitre introuvable");
         }
-
         const updated = await chapitreModel.findByIdAndUpdate(id, {
-            $set: { chapTitre,date },
+            $set: { titre,lienVideo },
         })
 
 

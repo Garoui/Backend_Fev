@@ -11,10 +11,10 @@ const cors = require("cors");//pour frontend
 
 const logMiddleware = require('./middlewares/logsMiddlewares.js'); //log
 
-const fetch = require('node-fetch');
-global.fetch = fetch;
-global.Headers = fetch.Headers;
-global.Request = fetch.Request;
+ const fetch = require('node-fetch');
+ global.fetch = fetch;
+ global.Headers = fetch.Headers;
+ global.Request = fetch.Request;
 global.Response = fetch.Response;
 
 var indexRouter = require('./routes/indexRouter');
@@ -22,11 +22,9 @@ var usersRouter = require('./routes/usersRouter');
 var osRouter = require('./routes/osRouter');
 var formationRouter = require('./routes/formationRouter');
 var GeminiRouter = require('./routes/GeminiRouter');
-var groupchatRouter = require('./routes/groupchatRouter');
 var chapitreRouter = require('./routes/chapitreRouter');
 var enregistrementRouter = require('./routes/enregistrementRouter');
-var messageRouter = require('./routes/messageRouter');
-var planificationRouter = require('./routes/planificationRouter');
+var categoryRouter = require('./routes/categoryRouter');
 var sessionRouter = require('./routes/sessionRouter');
 
 
@@ -42,9 +40,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(logMiddleware)  //log
 
 app.use(cors({
-  origin:"http://localhost:3000",//port frontend
-  methods:"GET,Post,PUT,Delete",
-}))
+  origin: process.env.origin_Front,//port frontend
+  methods:'GET,Post,PUT,Delete',
+  credentials: true
+}));
 
 app.use(session({
   secret: "net secret pfe",
@@ -59,16 +58,14 @@ app.use(session({
 
 
 //routes
-app.use('/', indexRouter);
+app.use('/idnex', indexRouter);
 app.use('/users', usersRouter);
 app.use('/os', osRouter);
 app.use('/formation', formationRouter);
 app.use('/Gemini', GeminiRouter);
-app.use('/groupchat',groupchatRouter );
 app.use('/chapitre',chapitreRouter );
 app.use('/enregistrement',enregistrementRouter );
-app.use('/message',messageRouter );
-app.use('/planification',planificationRouter );
+app.use('/category',categoryRouter );
 app.use('/session',sessionRouter );
 
 
@@ -85,13 +82,15 @@ app.use(function (err, req, res, next) {
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
   // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+  res.status(err.status || 500).json({
+  // res.render('error');
+  error: err.message || 'internal server error'
+});
 });
 
 const server = http.createServer(app); //2
 server.listen(process.env.port, () => {
   connectToMongoDb()
-  console.log("app is running on port 5000");
+  console.log("app is running on port 5001");
 
 });

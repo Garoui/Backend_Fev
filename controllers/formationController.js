@@ -1,5 +1,6 @@
 const formationModel = require('../models/formationSchema');
 const userModel = require('../models/userSchema');
+const CategoryModel = require('../models/categorySchema'); // adapte le chemin si besoin
 
 module.exports.getAllFormation = async (req, res) => {
     try {
@@ -50,25 +51,47 @@ module.exports.deleteFormationById = async (req, res) => {
     }
 }
 
+
 module.exports.addFormation = async (req, res) => {
-    try {
+  try {
+    let { titre, description } = req.body;
 
-        const { titre, specialite, formateur, dateCreation } = req.body;
-
-
-
-        //personalisation d'erreur
-
-        const formation = await formationModel.create({
-            titre,specialite, formateur,dateCreation
-        })
-
-
-        res.status(200).json({ formation });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
+    if (!titre || !description) {
+      return res.status(400).json({ error: "Titre and description are required." });
     }
-}
+
+    titre = titre.trim();
+    description = description.trim();
+
+    // Catégorie par défaut
+    let categoryName = "Autres";
+
+    const lowerTitre = titre.toLowerCase();
+    if (lowerTitre.includes("react") || lowerTitre.includes("node")) {
+      categoryName = "Développement Web";
+    } else if (lowerTitre.includes("python") || lowerTitre.includes("machine")) {
+      categoryName = "Data Science";
+    }
+
+    // Trouver la catégorie par son nom
+    const category = await CategoryModel.findOne({ nom: categoryName });
+
+    if (!category) {
+      return res.status(400).json({ error: `Catégorie "${categoryName}" introuvable.` });
+    }
+
+    const formation = await formationModel.create({
+      titre,
+      description,
+      categorie: category._id // on enregistre l'ObjectId ici
+    });
+
+    res.status(201).json({ message: "Formation ajoutée", formation });
+
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
 
 module.exports.updateFormation = async (req, res) => {
     try {
@@ -145,3 +168,12 @@ module.exports.desaffect = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 }
+
+module.exports.getFormationsAvecCategorie = async (req, res) => {
+    try {
+      const formations = await formationModel.find().populate('categorie');
+      res.json(formations);
+    } catch (err) {
+      res.status(500).json({ error: 'Erreur lors du chargement des cours' });
+    }
+  };

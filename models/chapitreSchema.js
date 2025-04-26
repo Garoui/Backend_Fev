@@ -1,16 +1,7 @@
 const mongoose = require('mongoose');
 const chapitreSchema = new mongoose.Schema({
-    chapTitre: {
-        type: String,
-        required: false,
-        unique: true,
-    },
-
-    date: {
-        type: Date,
-        
-    },
-
+    titre: { type: String },
+  lienVideo: { type: String },
 
 formation : {type : mongoose.Schema.Types.ObjectId,ref:'Formation'},//ONE TO MANY
 

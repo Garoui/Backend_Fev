@@ -1,13 +1,13 @@
 var express = require('express');
 var router = express.Router();
-const sessionController = require('../controllers/sessionController');
+const liveSessionController = require('../controllers/liveSessionController');
 /* GET home page. */
-router.post('/addSession', sessionController.addSession);
-router.get('/getAllSession', sessionController.getAllSession);
-router.get('/getSessionById/:id', sessionController.getSessionById);
+router.post('/createLiveSession', liveSessionController.createLiveSession);
+router.get('/getSessionsByCourse', liveSessionController.getSessionsByCourse);
+// router.get('/getSessionById/:id', liveSessionController.getSessionById);
 
 
-router.put('/updateSession/:id', sessionController.updateSession);
-router.delete('/deleteSessionById/:id', sessionController.deleteSessionById);
+// router.put('/updateSession/:id', liveSessionController.updateSession);
+// router.delete('/deleteSessionById/:id', liveSessionController.deleteSessionById);
 
 module.exports = router;

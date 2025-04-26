@@ -9,6 +9,7 @@ const {requireAuthUser} = require('../middlewares/authMiddleware');
 
 router.post('/login',userController.login);
 router.post('/logout',userController.logout);
+router.post('/signin',userController.signin);
 
 //admin
 router.post('/addUserAdmin',adminController.addUserAdmin);
@@ -19,13 +20,14 @@ router.delete('/deleteAdminById/:id',adminController.deleteAdminById);
 
 
 // /* GET users listing. */
- router.post('/addUserEtudiant',userController.addUserEtudiant);
+ router.post('/addUser',userController.addUser);
 //router.post('/addUserAdmin',userController.addUserAdmin);
- router.get('/getAllUsers',requireAuthUser,userController.getAllUsers);
+ router.get('/getAllUsers',userController.getAllUsers);
  router.get('/getUsersById/:id',userController.getUsersById);
  router.get('/searchUserByUsername',userController.searchUserByUsername)
  router.put('/updateuserById/:id',userController.updateuserById);
- router.post('/addUserEtudiantWithImg',upload.single("image"),userController.addUserEtudiantWithImg);
+ router.post('/addUserAdminWithImg',upload.single("image"),userController.addUserAdminWithImg);
+ 
 
 
 
@@ -33,7 +35,7 @@ router.delete('/deleteAdminById/:id',adminController.deleteAdminById);
  //formateur
 
  router.post('/addUserFormateur',formateurController.addUserFormateur);
- router.get('/getAllFormateurs',formateurController.getAllFormateurs);
+ router.get('/getAllFormateurs',formateurController.getFormateurs);
  router.get('/getFormateursById/:id',formateurController.getFormateursById);
  router.put('/updateFormateurById/:id',formateurController.updateFormateurById);
  router.delete('/deleteFormateurById/:id',formateurController.deleteFormateurById);

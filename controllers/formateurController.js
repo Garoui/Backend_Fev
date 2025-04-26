@@ -19,15 +19,15 @@ module.exports.addUserFormateur = async(req,res) => {
 }
 
 // get all  formateurs
-module.exports.getAllFormateurs = async (req, res) => {
+module.exports.getFormateurs = async (req, res) => {
   try {
     //personalisation d'erreur
     const formateurList = await userModel.find({role:'Formateur'});
-    if (!formateurList || formateurList.length === 0) {
-        throw new Error("Aucun formateur trouvé");
-    }
+    // if (!formateurList || formateurList.length === 0) {
+    //     throw new Error("Aucun formateur trouvé");
+    // }
 
-    res.status(200).json(formateurList)
+    res.status(200).json({formateurList});
 } catch (error) {
     res.status(500).json({ message: error.message });
 }
