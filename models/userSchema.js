@@ -1,44 +1,48 @@
 const mongoose = require('mongoose');
 const bcrypt = require("bcrypt")
 const userSchema = new mongoose.Schema({
-nom: {
-    type : String ,required : false ,unique: true},
-prenom:{ type : String,required : false},
+nom: {type : String ,required: true},
+prenom:{ type : String ,required: true},
 email: {
     type : String,required : true,unique : true,
       match: [/^\S+@\S+\.\S+$/, "Please enter a valid email address"],
 
     },
-password: {type : String, required :true,minLength:8,
-     match:[
-     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-         "Le mot de passe doit contenir au moins 8 caractères, une lettre majuscule, une lettre minuscule, un chiffre et un caractère spécial.",
- ],
-},
+    password: {
+        type: String,
+        required: true,
+        minLength: 8,
+        //  match: [
+        //    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+        //    "Le mot de passe doit contenir au moins 8 caractères, une lettre majuscule, une lettre minuscule, un chiffre et un caractère spécial."
+        //  ]
+      },
+numTel: { type: String },
 ville:{type: String},
-role:{type:String,enum : ["Admin", "Etudiant", "Formateur"]},
-
-image: {type : String, require : false,default : "role.png"},
+specialite:{type: String},
+role:{type: String,enum : ["Admin", "Apprenant", "Formateur"]},
+cv: {type : String},
 createdAt: { type: Date, default: Date.now },
 //etat: Boolean
-count : {type : Number, default:'0'},
-formations : [{type : mongoose.Schema.Types.ObjectId,ref:'Formation'}],//ONE TO MANY
 
+formations : [{type : mongoose.Schema.Types.ObjectId,ref:'Formation'}],//ONE TO MANY
+resetPasswordToken : { type: String },
+resetPasswordExpires :  { type: Date },
 //formation : {type : mongoose.Schema.Types.ObjectId,ref:'Formation'}//ONE TO one
 //etat: Boolean,
 //ban:Boolean,
 },
-{timestamps: true}
+
 );
  userSchema.pre("save", async function(next){
      try{
-        const [role, setRole] = useState("Etudiant");
+        // const [role, setRole] = useState("Apprenant");
          const salt = await bcrypt.genSalt();
          const user = this;// this hya data w data par defaut user
-        user.password = await bcrypt.hash(user.password,salt)
-         user.etat = false ;
-         user.ban = true ;
-         user.count = user.count + 1
+       user.password = await bcrypt.hash(user.password, salt);
+        //  user.etat = false ;
+        //  user.ban = true ;
+        //  user.count = user.count + 1
          next();
 
      } catch (error) {
@@ -50,14 +54,14 @@ userSchema.post("save", async function(req,res,next) {
     next();
 });
 //authentifier
-userSchema.statics.login= async function (email,password) {
+userSchema.statics.login= async function (email,password,role) {
     //console.log(email, password);
-        const user = await this.findOne({email});
+        const user = await this.findOne({ email, role });
       console.log("utilisateur recherché :",user);
-        if(user){
+        if(!user){
             const auth = await bcrypt.compare(password, user.password);
         console.log("mot de pass correct ?",auth);
-            if(auth){
+            if(!auth){
                 //if(user.etat == true) {
                     //ban hya tblokilk idha fama condition
                    // if(user.ban == false){
@@ -79,4 +83,5 @@ userSchema.statics.login= async function (email,password) {
 };
 const User = mongoose.model("User", userSchema);
 module.exports = User;
+
 

@@ -7,12 +7,12 @@ const formationSchema = new mongoose.Schema({
     chapitres: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Chapitre' }],//ONE TO MANY
  
     categorie: { type: mongoose.Schema.Types.ObjectId, ref: 'Categorie' },
-    Formateur: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    formateur: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     ressources: [{ type: mongoose.Schema.Types.ObjectId, ref: "Ressource" }],
   
 },
     //{ timestamps: true }
 );
 
-const Formation = mongoose.model("Formations", formationSchema);
+const Formation = mongoose.model("Formation", formationSchema);
 module.exports = Formation;

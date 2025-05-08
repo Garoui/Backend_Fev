@@ -1,51 +1,51 @@
-const CategoryModel = require('../models/categorySchema');
- const FormationModel = require('../models/formationSchema.js');
+const CategorieModel = require('../models/categorieSchema');
+ const formationModel = require('../models/formationSchema');
 
 
- module.exports.getFormationsGroupedByCategory = async (req, res) => {
-    try {
-      const groupedFormations = await FormationModel.aggregate([
-        {
-          $lookup: {
-            from: "categories", // nom de la collection MongoDB (en minuscule/pluriel)
-            localField: "categorie",
-            foreignField: "_id",
-            as: "categorieDetails"
-          }
-        },
-        {
-          $unwind: "$categorieDetails"
-        },
-        {
-          $group: {
-            _id: "$categorieDetails.nom", // ou "name" selon ton modèle
-            formations: {
-              $push: {
-                titre: "$titre",
-                description: "$description"
-              }
-            }
-          }
-        },
-        {
-          $project: {
-            _id: 0,
-            categorie: "$_id",
-            formations: 1
-          }
-        }
-      ]);
+//  module.exports.getFormationsGroupedByCategory = async (req, res) => {
+//     try {
+//       const groupedFormations = await FormationModel.aggregate([
+//         {
+//           $lookup: {
+//             from: "categories", // nom de la collection MongoDB (en minuscule/pluriel)
+//             localField: "categorie",
+//             foreignField: "_id",
+//             as: "categorieDetails"
+//           }
+//         },
+//         {
+//           $unwind: "$categorieDetails"
+//         },
+//         {
+//           $group: {
+//             _id: "$categorieDetails.nom", // ou "name" selon ton modèle
+//             formations: {
+//               $push: {
+//                 titre: "$titre",
+//                 description: "$description"
+//               }
+//             }
+//           }
+//         },
+//         {
+//           $project: {
+//             _id: 0,
+//             categorie: "$_id",
+//             formations: 1
+//           }
+//         }
+//       ]);
   
-      res.status(200).json(groupedFormations);
-    } catch (err) {
-      res.status(500).json({ error: err.message });
-    }
-  };
+//       res.status(200).json(groupedFormations);
+//     } catch (err) {
+//       res.status(500).json({ error: err.message });
+//     }
+//   };
   
 // Obtenir toutes les catégories
  module.exports.getAllCategories = async (req, res) => {
    try {
-     const categories = await CategoryModel.find();
+     const categories = await CategorieModel.find();
     res.status(200).json(categories);
    } catch (error) {
     console.error("Erreur lors de la récupération des catégories:", error);
@@ -70,7 +70,7 @@ const CategoryModel = require('../models/categorySchema');
  module.exports.addCategory = async (req, res) => {
    try {
      const { nom } = req.body;
-     const newCategorie = new CategoryModel({ nom });
+     const newCategorie = new CategorieModel({ nom });
      await newCategorie.save();
      res.status(201).json(newCategorie);
    } catch (error) {
@@ -107,3 +107,53 @@ const CategoryModel = require('../models/categorySchema');
 //     res.status(500).json({ message: "Erreur serveur" });
 //   }
 // };
+module.exports.getFormationsGroupedByCategory = async (req, res) => {
+  try {
+    const groupedFormations = await formationModel.aggregate([
+      {
+        $lookup: {
+          from: "categories",
+          localField: "categorie",
+          foreignField: "_id",
+          as: "categorieDetails"
+        }
+      },
+      {
+        $unwind: "$categorieDetails"
+      },
+      {
+        $group: {
+          _id: "$categorieDetails._id", // Group by category ID
+          categorie: { $first: "$categorieDetails.nom" }, // Keep category name
+          formations: {
+            $push: {
+              _id: "$_id", // Include formation ID for reference
+              titre: "$titre",
+              description: "$description",
+              // Add any other formation fields you need
+            }
+          }
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          categorie: 1,
+          categorieId: "$_id", // Explicitly include category ID
+          formations: 1
+        }
+      },
+      {
+        $sort: { categorie: 1 } // Sort alphabetically by category name
+      }
+    ]);
+
+    res.status(200).json(groupedFormations);
+  } catch (err) {
+    console.error("Error in getFormationsGroupedByCategory:", err);
+    res.status(500).json({ 
+      error: err.message,
+      stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
+    });
+  }
+};

@@ -1,11 +1,36 @@
 const formationModel = require('../models/formationSchema');
 const userModel = require('../models/userSchema');
-const CategoryModel = require('../models/categorySchema'); // adapte le chemin si besoin
+const CategorieModel = require('../models/categorieSchema'); // adapte le chemin si besoin
+const ChapitreModel = require('../models/chapitreSchema')
+// formationController.js
+module.exports.getMyFormation = async (req, res) => {
+    try {
+       // Verify authentication
+    if (!req.user) {
+      return res.status(401).json({ message: 'Non autorisé' });
+    }
+
+    // Get formations for the current user
+    const formations = await formationModel.find({ userId: req.user._id })
+      .populate('category') // If you need category data
+      .exec();
+
+    res.status(200).json({ formations });
+  } catch (error) {
+    console.error('Error in getMyFormation:', error);
+    res.status(500).json({ 
+      message: 'Erreur serveur',
+      error: error.message 
+    });
+  }
+};
+
+
 
 module.exports.getAllFormation = async (req, res) => {
     try {
         //personalisation d'erreur
-        const formationList = await formationModel.find();
+        const formationList = await formationModel.find().populate('categorie').populate('chapitres');
         if (!formationList || formationList.length === 0) {
             throw new Error("Aucun formation trouvé");
         }
@@ -53,43 +78,76 @@ module.exports.deleteFormationById = async (req, res) => {
 
 
 module.exports.addFormation = async (req, res) => {
-  try {
-    let { titre, description } = req.body;
+//   try {
+//     let { titre, description } = req.body;
 
-    if (!titre || !description) {
-      return res.status(400).json({ error: "Titre and description are required." });
+//     if (!titre || !description) {
+//       return res.status(400).json({ error: "Titre and description are required." });
+//     }
+
+//     titre = titre.trim();
+//     description = description.trim();
+
+//     // Catégorie par défaut
+//     let categoryName = "Autres";
+
+//     const lowerTitre = titre.toLowerCase();
+//     if (lowerTitre.includes("react") || lowerTitre.includes("node")) {
+//       categoryName = "Développement Web";
+//     } else if (lowerTitre.includes("python") || lowerTitre.includes("machine")) {
+//       categoryName = "Data Science";
+//     }
+
+//     // Trouver la catégorie par son nom
+//     const category = await CategoryModel.findOne({ nom: categoryName });
+
+//     if (!category) {
+//       return res.status(400).json({ error: `Catégorie "${categoryName}" introuvable.` });
+//     }
+
+//     const formation = await formationModel.create({
+//       titre,
+//       description,
+//       categorie: category._id // on enregistre l'ObjectId ici
+//     });
+
+//     res.status(201).json({ message: "Formation ajoutée", formation });
+
+//   } catch (err) {
+//     res.status(500).json({ error: err.message });
+//   }
+// };
+try {
+    const { titre, description, nomCategorie, chapitres } = req.body;
+
+    // Trouver ou créer la catégorie
+    let categorie = await CategorieModel.findOne({ nom: nomCategorie });
+    if (!categorie) {
+      categorie = await CategorieModel.create({ nom: nomCategorie });
     }
 
-    titre = titre.trim();
-    description = description.trim();
-
-    // Catégorie par défaut
-    let categoryName = "Autres";
-
-    const lowerTitre = titre.toLowerCase();
-    if (lowerTitre.includes("react") || lowerTitre.includes("node")) {
-      categoryName = "Développement Web";
-    } else if (lowerTitre.includes("python") || lowerTitre.includes("machine")) {
-      categoryName = "Data Science";
+    // Créer les chapitres et récupérer leurs IDs
+    const chapitreIds = [];
+    for (const chap of chapitres) {
+      const nouveauChapitre = await ChapitreModel.create({
+        titre: chap.titre,
+        lienVideo: chap.lienVideo
+      });
+      chapitreIds.push(nouveauChapitre._id);
     }
 
-    // Trouver la catégorie par son nom
-    const category = await CategoryModel.findOne({ nom: categoryName });
-
-    if (!category) {
-      return res.status(400).json({ error: `Catégorie "${categoryName}" introuvable.` });
-    }
-
-    const formation = await formationModel.create({
+    // Créer le cours
+    const formations = await formationModel.create({
       titre,
       description,
-      categorie: category._id // on enregistre l'ObjectId ici
+      categorie: categorie._id,
+      chapitres: chapitreIds
     });
 
-    res.status(201).json({ message: "Formation ajoutée", formation });
-
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(201).json({ message: 'Cours créé', formations });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Erreur serveur' });
   }
 };
 
@@ -169,11 +227,54 @@ module.exports.desaffect = async (req, res) => {
     }
 }
 
-module.exports.getFormationsAvecCategorie = async (req, res) => {
+module.exports.getFormationsGroupedByCategory = async (req, res) => {
     try {
-      const formations = await formationModel.find().populate('categorie');
-      res.json(formations);
+      const groupedFormations = await formationModel.aggregate([
+        {
+          $lookup: {
+            from: "categories",
+            localField: "categorie",
+            foreignField: "_id",
+            as: "categorieDetails"
+          }
+        },
+        {
+          $unwind: "$categorieDetails"
+        },
+        {
+          $group: {
+            _id: "$categorieDetails._id", // Group by category ID
+            categorie: { $first: "$categorieDetails.nom" }, // Keep category name
+            formations: {
+              $push: {
+                _id: "$_id", // Include formation ID for reference
+                titre: "$titre",
+                description: "$description",
+                // Add any other formation fields you need
+              }
+            }
+          }
+        },
+        {
+          $project: {
+            _id: 0,
+            categorie: 1,
+            categorieId: "$_id", // Explicitly include category ID
+            formations: 1
+          }
+        },
+        {
+          $sort: { categorie: 1 } // Sort alphabetically by category name
+        }
+      ]);
+  
+      res.status(200).json(groupedFormations);
     } catch (err) {
-      res.status(500).json({ error: 'Erreur lors du chargement des cours' });
+      console.error("Error in getFormationsGroupedByCategory:", err);
+      res.status(500).json({ 
+        error: err.message,
+        stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
+      });
     }
   };
+  

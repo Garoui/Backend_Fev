@@ -2,21 +2,29 @@
 const userModel = require('../models/userSchema');
 
 //add formateur
-module.exports.addUserFormateur = async(req,res) => {
-    try {
-        const {nom , prenom , email , password , specialite } = req.body;
-        const roleFormateur = 'Formateur'
-        const formateur = await userModel.create({
-        nom,prenom,email ,password ,specialite ,role : roleFormateur
-        })
+module.exports.addUserFormateur = async (req, res) => {
+  try {
+    const { nom, prenom, email, password, specialite } = req.body;
+    const roleFormateur = 'Formateur';
 
-        res.status(200).json({formateur});
+    const cv = req.file ? req.file.path : null;
 
-    } catch (error) {
-        res.status(500).json
-         ({message: error.message});
-    }
-}
+    const formateur = await userModel.create({
+      nom,
+      prenom,
+      email,
+      password,
+      specialite,
+      role: roleFormateur,
+      cv,
+    });
+
+    res.status(200).json({ formateur });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 
 // get all  formateurs
 module.exports.getFormateurs = async (req, res) => {
@@ -67,7 +75,7 @@ module.exports.updateFormateurById = async (req, res) => {
   // delete formateur
 module.exports.deleteFormateurById = async (req, res) => {
     try {
-      const formateur = await userModel.findByIdAndDelete(req.params.id);
+      const formateur = await userModel.findByIdAndDelete({role:'Formateur'});
       if (!formateur) {
         return res.status(404).json({ message: 'Formateur non trouvé' });
       }
