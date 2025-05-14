@@ -32,12 +32,13 @@ router.get('/getMyProfile',requireAuthUser,userController.getMyProfile);
 //router.post('/addUserAdmin',userController.addUserAdmin);
  router.get('/getAllUsers',userController.getAllUsers);
  
- router.get('/getUsersById/:id',userController.getUsersById);
+ router.get('/getUsersById/:id',requireAuthUser, userController.getUsersById);
  router.get('/searchUserByUsername',userController.searchUserByUsername)
  router.put('/updateUserById/:id',userController.updateUserById);
  router.post('/addUserAdminWithImg',upload.single("image"),userController.addUserAdminWithImg);
  
 
+ router.put('/updateProfile', requireAuthUser,userController.updateProfile);
 
 
 

@@ -5,6 +5,8 @@ const liveSessionSchema = new mongoose.Schema({
     dateFin: { type: Date },
     
     formations: { type: mongoose.Schema.Types.ObjectId, ref: "Formations" },
+    participants: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+
   });
 
 

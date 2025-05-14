@@ -277,4 +277,20 @@ module.exports.getFormationsGroupedByCategory = async (req, res) => {
       });
     }
   };
+  module.exports.getFormationsByCategorieId = async (req, res) => {
+    try {
+      const { id } = req.params;
+      const formations = await formationModel.find({ categorie: id })
+        .populate('categorie')
+        .populate('chapitres');
+        
+      if (!formations || formations.length === 0) {
+        return res.status(404).json({ message: "Aucune formation trouvée pour cette catégorie." });
+      }
+  
+      res.status(200).json(formations);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  };
   

@@ -20,4 +20,9 @@ router.put('/desaffect', formationController.desaffect);
 router.put('/updateFormation/:id', formationController.updateFormation);
 router.delete('/deleteFormationById/:id', formationController.deleteFormationById);
 
+
+
+router.get('/getFormationsByCategorieId', formationController.getFormationsByCategorieId);
+
+
 module.exports = router;
