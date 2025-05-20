@@ -6,7 +6,8 @@ const apprenantController = require('../controllers/apprenantController');
 const formateurController = require('../controllers/formateurController');
 const adminController = require('../controllers/adminController');
 const {requireAuthUser} = require('../middlewares/authMiddleware');
-const {addUser} = require('../controllers/userController')
+const {addUser} = require('../controllers/userController');
+
 router.post('/login',requireAuthUser ,userController.login);
 router.post('/logout',userController.logout);
 router.post('/signin',userController.signin);
