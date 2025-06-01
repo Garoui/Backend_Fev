@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const sessionController = require('../controllers/sessionController');
-const {requireAuthUser} = require('../middlewares/authMiddleware');
+const {requireAuthUser, checkAdmin} = require('../middlewares/authMiddleware');
 
 //const liveSessionController = require('../controllers/liveSessionController');
 /* GET home page. */
@@ -15,13 +15,20 @@ const {requireAuthUser} = require('../middlewares/authMiddleware');
 
 router.get('/', sessionController.getAllSessions);
 router.get('/:id', sessionController.getSession);
-router.post('/', sessionController.createSession);
+router.post('/createSession', sessionController.createSession);
 router.put('/:id', sessionController.updateSession);
 router.delete('/:id', sessionController.deleteSession);
 router.post('/:id/start-conference', sessionController.startVideoConference);
 
 // Add this route
-router.get('/formateur/sessions', requireAuthUser, sessionController.getFormateurSessions);
-router.get('/apprenant/:apprenantId/sessions', requireAuthUser, sessionController.getApprenantSessions);
+router.get('/getFormateurSessions', requireAuthUser, sessionController.getFormateurSessions);
+router.get('/getApprenantSessions', requireAuthUser, sessionController.getApprenantSessions);
+// In sessionRouter.js
+router.get('/status/:userId/:role', sessionController.getSessionsWithStatus);
 
+// Update routes in sessionRouter.js
+ router.post('/', requireAuthUser, checkAdmin, sessionController.createSession);
+router.put('/:id', requireAuthUser, checkAdmin, sessionController.updateSession);
+// In your routes
+router.get('/', requireAuthUser, sessionController.validateSessionAccess,sessionController.generateJitsiToken);
 module.exports = router;

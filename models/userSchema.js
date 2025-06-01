@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require("bcrypt")
+
+
 const userSchema = new mongoose.Schema({
 nom: {type : String ,required: true},
 prenom:{ type : String ,required: true},
@@ -24,7 +26,17 @@ role:{type: String,enum : ["Admin", "Apprenant", "Formateur"]},
 cv: {type : String},
 createdAt: { type: Date, default: Date.now },
 //etat: Boolean
-
+status: {
+  type: String,
+  enum: ['UPCOMING', 'ONGOING', 'COMPLETED', 'CANCELLED'],
+  default: 'UPCOMING'
+},
+jitsiRoom: {  // Stocker les infos de la salle Jitsi
+  type: String,
+  default: function() {
+    return `sesame-${this._id}-${Math.random().toString(36).substring(7)}`;
+  }
+},
 formations : [{type : mongoose.Schema.Types.ObjectId,ref:'Formation'}],//ONE TO MANY
 resetPasswordToken : { type: String },
 resetPasswordExpires :  { type: Date },

@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const userModel = require("../models/userSchema");
 
 const requireAuthUser = async (req, res, next) => {
+  
   const token = req.cookies.jwt_token_abir;
   console.log("Token reçu :", token);
 
@@ -34,8 +35,23 @@ const requireAuthUser = async (req, res, next) => {
     return res.status(401).json({ message: "Aucun token fourni" });
   }
 };
+const checkAdmin = (req, res, next) => {
+  if (!req.user) {
+    return res.status(401).json({ message: "Authentification requise" });
+  }
 
-module.exports = { requireAuthUser };
+  if (req.user.role !== "Admin") {
+    return res.status(403).json({
+      message: "Action réservée aux administrateurs",
+      requiredRole: "Admin",
+      yourRole: req.user.role
+    });
+  }
+
+  next();
+};
+
+module.exports = { requireAuthUser ,checkAdmin };
 
 // const jwt = require("jsonwebtoken");
 

@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
-const { Schema } = mongoose;
+const crypto = require('crypto');
+const { Schema } = mongoose; 
 
-const sessionSchema = new Schema({
+const sessionSchema = new mongoose.Schema({
   title: {
     type: String,
     required: [true, 'Le titre de la session est requis'],
@@ -14,25 +15,18 @@ const sessionSchema = new Schema({
     maxlength: [500, 'La description ne peut pas dépasser 500 caractères']
   },
   start: {
-    type: Date,
-    required: [true, 'La date de début est requise'],
-    validate: {
-      validator: function(value) {
-        return value > new Date();
-      },
-      message: 'La date de début doit être dans le futur'
-    }
-  },
-  end: {
-    type: Date,
-    required: [true, 'La date de fin est requise'],
-    validate: {
-      validator: function(value) {
-        return value > this.start;
-      },
-      message: 'La date de fin doit être après la date de début'
-    }
-  },
+  type: Date,
+  required: true
+},
+end: {
+  type: Date,
+  required: true
+},
+ status: {
+  type: String,
+  enum: ['UPCOMING', 'ONGOING', 'COMPLETED', 'CANCELLED', 'SCHEDULED'],
+  default: 'UPCOMING'
+},
   formateur: {
     type: Schema.Types.ObjectId,
     ref: 'User',
@@ -45,17 +39,16 @@ const sessionSchema = new Schema({
       message: 'L\'utilisateur doit être un formateur'
     }
   },
-  apprenants: [{
-    type: Schema.Types.ObjectId,
+  apprenants: {
+    type: [mongoose.Schema.Types.ObjectId],
     ref: 'User',
     validate: {
-      validator: async function(value) {
-        const user = await mongoose.model('User').findById(value);
-        return user && user.role === 'Apprenant';
+      validator: function(v) {
+        return v.length <= 20;
       },
-      message: 'Tous les participants doivent être des apprenants'
+      message: 'Une session ne peut pas avoir plus de 20 apprenants'
     }
-  }],
+  },
   type: {
     type: String,
     enum: {
@@ -64,15 +57,23 @@ const sessionSchema = new Schema({
     },
     default: 'online'
   },
+ jitsiRoom: {
+  type: String,
+  required: true,
+  default: function() {
+    return `sesame-${this._id}-${crypto.randomBytes(4).toString('hex')}`;
+  },
+  validate: {
+    validator: function(v) {
+      return /^[a-zA-Z0-9-_]+$/.test(v);
+    },
+    message: 'Invalid Jitsi room name format'
+  }
+},
   conferenceUrl: {
     type: String,
-    select: false // Hidden by default for security
+    select: false
   },
- status: {
-  type: String,
-  enum: ['scheduled', 'completed', 'cancelled'],
-  default: 'scheduled'
-},
   createdAt: {
     type: Date,
     default: Date.now
@@ -86,18 +87,30 @@ const sessionSchema = new Schema({
   toObject: { virtuals: true }
 });
 
-// Virtual property for duration (in minutes)
+// Indexes
+sessionSchema.index({ start: 1 });
+sessionSchema.index({ formateur: 1 });
+sessionSchema.index({ apprenants: 1 });
+sessionSchema.index({ status: 1 });
+
+// Virtuals
 sessionSchema.virtual('duration').get(function() {
   return (this.end - this.start) / (1000 * 60);
 });
 
-// Update timestamp on save
+// Hooks
 sessionSchema.pre('save', function(next) {
   this.updatedAt = new Date();
+  
+  const now = new Date();
+  if (this.start <= now && this.end >= now) {
+    this.status = 'ongoing';
+  } else if (this.end < now) {
+    this.status = 'completed';
+  }
   next();
 });
 
-// Auto-generate conference URL before saving new online sessions
 sessionSchema.pre('save', async function(next) {
   if (this.isNew && this.type === 'online') {
     this.conferenceUrl = generateConferenceUrl(this._id);
@@ -105,7 +118,6 @@ sessionSchema.pre('save', async function(next) {
   next();
 });
 
-// Query middleware to populate formateur and apprenants by default
 sessionSchema.pre(/^find/, function(next) {
   this.populate({
     path: 'formateur',
@@ -117,12 +129,11 @@ sessionSchema.pre(/^find/, function(next) {
   next();
 });
 
-// Helper function to generate conference URL
 function generateConferenceUrl(sessionId) {
-  // Implement your actual video conference URL generation logic
-  return `https://your-video-service.com/room/${sessionId}`;
-}
+  // Simple implementation - you can customize this as needed
+  return `https://meet.jit.si/sesame-${sessionId}`;
+};
 
-const Session = mongoose.model('Session', sessionSchema);
+const Session = mongoose.model("Session", sessionSchema);
 
 module.exports = Session;
