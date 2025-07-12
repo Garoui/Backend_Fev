@@ -70,7 +70,8 @@ app.use('/session',sessionRouter );
 
 app.use("/api/auth", authRouter);
 // Dans app.js ou server.js
-app.use(cookieParser());
+
+
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Credentials', true);
   res.header(

@@ -207,14 +207,37 @@ module.exports.getAllFormateurs = async (req, res) => {
     
 // Dans votre contrôleur users
 module.exports.updateProfile = async (req, res) => {
-    try {
-      const { id } = req.user; // L'ID devrait venir du token JWT
-      const updated = await userModel.findByIdAndUpdate(id, req.body, { new: true });
-      res.status(200).json(updated);
-    } catch (error) {
-      res.status(500).json({ message: error.message });
+  try {
+    const userId = req.user.id; // From auth middleware
+    const updates = req.body;
+
+    // Don't update password unless it's provided and confirmed
+    if (!updates.password || updates.password !== updates.confirmPassword) {
+      delete updates.password;
     }
-  };
+    delete updates.confirmPassword;
+
+    // Hash new password if provided
+    if (updates.password) {
+      updates.password = await bcrypt.hash(updates.password, 10);
+    }
+
+    const updatedUser = await userModel.findByIdAndUpdate(
+      userId, 
+      updates,
+      { new: true }
+    ).select('-password');
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    console.error("Update error:", error);
+    res.status(500).json({ message: error.message });
+  }
+};
 module.exports.getUsersById = async (req, res) => {
     try {
         //const id= req.params.id
@@ -226,6 +249,19 @@ module.exports.getUsersById = async (req, res) => {
         res.status(200).json({ user });
 
     } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+module.exports.getUserByID = async (req, res) => {
+    try {
+        console.log("Fetching user with ID:", req.params.id);
+        const user = await userModel.findById(req.params.id);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        res.status(200).json({ user });
+    } catch (error) {
+        console.error("Error in getUsersByID:", error);
         res.status(500).json({ message: error.message });
     }
 }
@@ -510,3 +546,26 @@ module.exports.addUtilisateur = async (req,res) => {
         res.status(500).json({message: error.message});
     }
 }
+
+module.exports.updateUserStatus = async (req,res) => {
+
+try {
+    const { id } = req.params;
+    const { status } = req.body;
+    
+    const updatedUser = await userModel.findByIdAndUpdate(
+      id,
+      { Status: status },
+      { new: true }
+    );
+    
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    console.error("Error updating status:", error);
+    res.status(500).json({ message: error.message });
+  }
+};
