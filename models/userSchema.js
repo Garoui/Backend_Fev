@@ -26,10 +26,15 @@ role:{type: String,enum : ["Admin", "Apprenant", "Formateur"]},
 cv: {type : String},
 createdAt: { type: Date, default: Date.now },
 //etat: Boolean
-status: {
+ Status: {
+    type: String,
+    enum: ['Pending', 'Paid', 'Unpaid', 'Canceled'],
+    default: 'Pending'
+},
+Status: {
   type: String,
-  enum: ['UPCOMING', 'ONGOING', 'COMPLETED', 'CANCELLED'],
-  default: 'UPCOMING'
+  enum: ['Actif', 'Désactivé'],
+  default: 'Actif'
 },
 jitsiRoom: {  // Stocker les infos de la salle Jitsi
   type: String,

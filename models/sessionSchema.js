@@ -22,10 +22,10 @@ end: {
   type: Date,
   required: true
 },
- status: {
-  type: String,
-  enum: ['UPCOMING', 'ONGOING', 'COMPLETED', 'CANCELLED', 'SCHEDULED'],
-  default: 'UPCOMING'
+ Status: {
+    type: String,
+    enum: ['Pending', 'Paid', 'Unpaid', 'Canceled'],
+    default: 'Pending'
 },
   formateur: {
     type: Schema.Types.ObjectId,

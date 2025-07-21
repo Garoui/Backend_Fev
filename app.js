@@ -81,8 +81,8 @@ app.get('/test', (req, res) => {
 });
 
 
-
 app.use(cookieParser());
+
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Credentials', true);
   res.header(
