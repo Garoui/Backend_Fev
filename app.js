@@ -17,15 +17,18 @@ const logMiddleware = require('./middlewares/logsMiddlewares.js'); //log
  global.Request = fetch.Request;
 global.Response = fetch.Response;
 
-var indexRouter = require('./routes/indexRouter');
-var usersRouter = require('./routes/usersRouter');
-var osRouter = require('./routes/osRouter');
-var formationRouter = require('./routes/formationRouter');
-var GeminiRouter = require('./routes/GeminiRouter');
-var chapitreRouter = require('./routes/chapitreRouter');
-var enregistrementRouter = require('./routes/enregistrementRouter');
-var categoryRouter = require('./routes/categoryRouter');
-var sessionRouter = require('./routes/sessionRouter');
+const indexRouter = require('./routes/indexRouter');
+const usersRouter = require('./routes/usersRouter');
+const osRouter = require('./routes/osRouter');
+const formationRouter = require('./routes/formationRouter');
+const GeminiRouter = require('./routes/GeminiRouter');
+const chapitreRouter = require('./routes/chapitreRouter');
+const enregistrementRouter = require('./routes/enregistrementRouter');
+const categoryRouter = require('./routes/categoryRouter');
+const sessionRouter = require('./routes/sessionRouter');
+
+// Import meeting routes
+const meetingRoutes = require("./routes/meetingRoutes"); 
 
 
 
@@ -69,8 +72,16 @@ app.use('/category',categoryRouter );
 app.use('/session',sessionRouter );
 
 app.use("/api/auth", authRouter);
-// Dans app.js ou server.js
 
+// meeting endpoints base route  
+app.use("/api/meetings", meetingRoutes);
+// test
+app.get('/test', (req, res) => {
+  res.json({ message: 'Test endpoint is working!' });
+});
+
+
+app.use(cookieParser());
 
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Credentials', true);
